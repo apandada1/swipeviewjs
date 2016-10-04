@@ -1,0 +1,47 @@
+/* This is needed for vw to work.
+   You probably already have this in your app stylesheet though
+*/
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+/* You will need to define your own height,
+   I've done it here with the height atribute,
+   but you can do other ways too. */
+.swipe-container {
+  position: relative;
+  height: 300px;
+  overflow: hidden;
+  width: 100vw;
+}
+.swipe-header {
+
+}
+.swipe-header ul {
+  display: flex;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.swipe-header li {
+  flex: 1;
+  text-align: center;
+  line-height: 46px;
+  border-bottom: 2px solid transparent;
+  cursor: default;
+}
+.swipe-header li.active {
+  border-color: #000;
+}
+.swipe-content {
+  position: absolute;
+  top: 48px;
+  bottom: 0;
+  left: 0;
+  display: flex;
+}
+.swipe-pane {
+  overflow-y: auto;
+  width: 100vw;
+}

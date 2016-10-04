@@ -1,0 +1,18 @@
+body {
+  background: #eee;
+  font-family: sans-serif;
+}
+
+h1, footer {
+  text-align: center;
+}
+
+.swipe-container {
+  max-width: 480px; 
+  margin: 25px auto;
+  outline: 1px solid #ccc;
+  background: #fff;
+}
+.swipe-pane {
+  max-width: 480px;
+}
