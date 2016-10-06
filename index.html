@@ -7,6 +7,12 @@
   <link rel="stylesheet" type="text/css" href="page.css">
   <link rel="stylesheet" type="text/css" href="swipeview.css">
   <script src="swipe.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function(event) {
+      swipe.bind(document.getElementById('container'))
+      swipe.setSizes()
+    })
+  </script>
 </head>
 <body>
 <h1>Swipeview.js</h1>

@@ -1,8 +1,3 @@
-document.addEventListener('DOMContentLoaded', function(event) {
-  swipe.bind(document.getElementById('container'))
-  swipe.setSizes()
-})
-
 var swipe = {
   touchStartPos: 0,
   lastYPos: 0,
@@ -79,4 +74,12 @@ var swipe = {
     swipe.contentEl.setAttribute('style', 'transform: translate3d(-'+swipe.index*swipe.slideWidth+'px,0,0)')
     swipe.lock = null
   }
+}
+if (typeof exports !== 'undefined') {
+  if (typeof module !== 'undefined' && module.exports) {
+    exports = module.exports = swipe;
+  }
+  exports.swipe = swipe;
+} else {
+  window.swipe = swipe;
 }
