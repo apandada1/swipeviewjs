@@ -23,11 +23,36 @@ var swipe = {
     swipe.contentEl.addEventListener('touchend', swipe.contentTouchEnd)
     swipe.contentEl.addEventListener('touchcancel', swipe.contentTouchEnd)
 
+    swipe.headerEl.children[0].children[swipe.index].className += ' active'
+
+    for (var i=0; i<swipe.headerEl.children[0].children.length; i++) {
+      swipe.headerEl.children[0].children[i].addEventListener('touchstart', swipe.navigate(i))
+    }
+
     window.addEventListener('resize', swipe.setSizes)
   },
   setSizes: function() {
     swipe.slideNumber = swipe.contentEl.children.length -1
     swipe.slideWidth = swipe.contentEl.children[0].offsetWidth
+    swipe.headerEl.querySelector('.swipe-bar').setAttribute('style', 'width:' + swipe.headerEl.children[0].children[0].offsetWidth + 'px')
+  },
+  navigate: function(pane) {
+    return function() {
+      // remove old classes
+      swipe.headerEl.children[0].children[swipe.index].className = swipe.headerEl.children[0].children[swipe.index].className.replace(' active', '')
+      var swipeBar = swipe.headerEl.querySelector('.swipe-bar')
+      swipeBar.className = swipeBar.className.replace(' swipe-animate', '')
+      swipe.contentEl.className = swipe.contentEl.className.replace(' swipe-animate', '')
+
+      swipe.index = pane
+
+      // animate everything
+      swipe.contentEl.className = swipe.contentEl.className + ' swipe-animate'
+      swipe.contentEl.setAttribute('style', 'transform: translate3d(-'+swipe.index*swipe.slideWidth+'px,0,0)')
+      swipe.headerEl.children[0].children[swipe.index].className += ' active'
+      swipeBar.className = swipeBar.className + ' swipe-animate'
+      swipeBar.setAttribute('style', 'width:' + swipe.headerEl.children[0].children[0].offsetWidth + 'px;transform:translate('+swipe.index*swipe.headerEl.children[0].children[0].offsetWidth + 'px)')
+    }
   },
   contentTouchStart: function(event) {
     // This is a hack to detect flicks  
@@ -38,6 +63,8 @@ var swipe = {
     swipe.touchStartPos = event.touches[0].pageX
     swipe.lastYPos = event.touches[0].pageY
     swipe.contentEl.className = swipe.contentEl.className.replace(' swipe-animate', '')
+    var swipeBar = swipe.headerEl.querySelector('.swipe-bar')
+    swipeBar.className = swipeBar.className.replace(' swipe-animate', '')
   },
   contentTouchMove: function(event) {
     swipe.moveX = swipe.index * swipe.slideWidth + (swipe.touchStartPos - event.touches[0].pageX)
@@ -55,6 +82,10 @@ var swipe = {
         return  
       }
       swipe.contentEl.setAttribute('style', 'transform: translate3d(-'+swipe.moveX+'px,0,0)')
+      var slideWidth = swipe.index*swipe.headerEl.children[0].children[0].offsetWidth + (((swipe.touchStartPos - event.touches[0].pageX)/swipe.slideWidth)*swipe.headerEl.children[0].children[0].offsetWidth)
+      swipe.headerEl
+        .querySelector('.swipe-bar')
+        .setAttribute('style', 'width:' + swipe.headerEl.children[0].children[0].offsetWidth + 'px;transform:translate('+ slideWidth + 'px)')
     }
   },
   contentTouchEnd: function(event) {
@@ -62,6 +93,7 @@ var swipe = {
       swipe.lock = null
       return
     }
+    swipe.headerEl.children[0].children[swipe.index].className = swipe.headerEl.children[0].children[swipe.index].className.replace(' active', '')
     var absMove = Math.abs(swipe.index * swipe.slideWidth - swipe.moveX)
     if (absMove > swipe.slideWidth/2 || swipe.longTouch === false) {
       if (swipe.moveX > swipe.index * swipe.slideWidth && swipe.index < swipe.slideNumber) {
@@ -73,6 +105,10 @@ var swipe = {
     swipe.contentEl.className = swipe.contentEl.className + ' swipe-animate'
     swipe.contentEl.setAttribute('style', 'transform: translate3d(-'+swipe.index*swipe.slideWidth+'px,0,0)')
     swipe.lock = null
+    swipe.headerEl.children[0].children[swipe.index].className += ' active'
+    var swipeBar = swipe.headerEl.querySelector('.swipe-bar')
+    swipeBar.className = swipeBar.className + ' swipe-animate'
+    swipeBar.setAttribute('style', 'width:' + swipe.headerEl.children[0].children[0].offsetWidth + 'px;transform:translate('+swipe.index*swipe.headerEl.children[0].children[0].offsetWidth + 'px)')
   }
 }
 if (typeof exports !== 'undefined') {
