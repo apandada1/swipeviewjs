@@ -1,5 +1,6 @@
 var swipe = {
   touchStartPos: 0,
+  lastXPos: 0,
   lastYPos: 0,
   moveX: 0,
   index: 0,
@@ -61,12 +62,14 @@ var swipe = {
       swipe.longTouch = true
     }, 250)
     swipe.touchStartPos = event.touches[0].pageX
+    swipe.lastXPos = event.touches[0].pageX
     swipe.lastYPos = event.touches[0].pageY
     swipe.contentEl.className = swipe.contentEl.className.replace(' swipe-animate', '')
     var swipeBar = swipe.headerEl.querySelector('.swipe-bar')
     swipeBar.className = swipeBar.className.replace(' swipe-animate', '')
   },
   contentTouchMove: function(event) {
+    swipe.lastXPos = event.touches[0].pageX
     swipe.moveX = swipe.index * swipe.slideWidth + (swipe.touchStartPos - event.touches[0].pageX)
     if (swipe.lock === null) {
       var thresh = 7
@@ -96,10 +99,14 @@ var swipe = {
     swipe.headerEl.children[0].children[swipe.index].className = swipe.headerEl.children[0].children[swipe.index].className.replace(' active', '')
     var absMove = Math.abs(swipe.index * swipe.slideWidth - swipe.moveX)
     if (absMove > swipe.slideWidth/2 || swipe.longTouch === false) {
-      if (swipe.moveX > swipe.index * swipe.slideWidth && swipe.index < swipe.slideNumber) {
-        swipe.index++
-      } else if (swipe.moveX < swipe.index * swipe.slideWidth && swipe.index > 0) {
-        swipe.index--
+      // rejects touches that don't really move
+      if (Math.abs(swipe.touchStartPos - swipe.lastXPos) > 3) {
+        // determines which way the swipe was
+        if (swipe.moveX > swipe.index * swipe.slideWidth && swipe.index < swipe.slideNumber) {
+          swipe.index++
+        } else if (swipe.moveX < swipe.index * swipe.slideWidth && swipe.index > 0) {
+          swipe.index--
+        }
       }
     }
     swipe.contentEl.className = swipe.contentEl.className + ' swipe-animate'
