@@ -33,9 +33,15 @@ var swipe = {
     window.addEventListener('resize', swipe.setSizes)
   },
   setSizes: function() {
-    swipe.slideNumber = swipe.contentEl.children.length -1
-    swipe.slideWidth = swipe.contentEl.children[0].offsetWidth
-    swipe.headerEl.querySelector('.swipe-bar').setAttribute('style', 'width:' + swipe.headerEl.children[0].children[0].offsetWidth + 'px')
+    // don't do anything if person is in the middle of a swipe
+    // it's get jerky and yuck
+    if (swipe.lock === null) {
+      swipe.slideNumber = swipe.contentEl.children.length -1
+      swipe.slideWidth = swipe.contentEl.children[0].offsetWidth
+      swipe.contentEl.setAttribute('style', 'transform: translate3d(-'+swipe.index*swipe.slideWidth+'px,0,0)')
+      var swipeBar = swipe.headerEl.querySelector('.swipe-bar')
+      swipeBar.setAttribute('style', 'width:' + swipe.headerEl.children[0].children[0].offsetWidth + 'px;transform:translate3d('+swipe.index*swipe.headerEl.children[0].children[0].offsetWidth + 'px,0,0)')
+    }
   },
   navigate: function(pane) {
     return function() {
@@ -115,7 +121,7 @@ var swipe = {
     swipe.headerEl.children[0].children[swipe.index].className += ' active'
     var swipeBar = swipe.headerEl.querySelector('.swipe-bar')
     swipeBar.className = swipeBar.className + ' swipe-animate'
-    swipeBar.setAttribute('style', 'width:' + swipe.headerEl.children[0].children[0].offsetWidth + 'px;transform:translate('+swipe.index*swipe.headerEl.children[0].children[0].offsetWidth + 'px)')
+    swipeBar.setAttribute('style', 'width:' + swipe.headerEl.children[0].children[0].offsetWidth + 'px;transform:translate3d('+swipe.index*swipe.headerEl.children[0].children[0].offsetWidth + 'px,0,0)')
   }
 }
 if (typeof exports !== 'undefined') {
