@@ -12,6 +12,7 @@ var swipe = {
   lock: null,
   longTouch: false,
   iOSBack: null,
+  iOSBackCb: null,
 
   // in react or probably anything else, you would just bind
   // all these events using JSX, rather than this function
@@ -80,7 +81,7 @@ var swipe = {
     var swipeBar = swipe.headerEl.querySelector('.swipe-bar')
     swipeBar.className = swipeBar.className.replace(' swipe-animate', '')
   },
-  contentTouchMove: function(event) {
+  contentTouchMove: function(event, shouldNotMoveX) {
     swipe.lastXPos = event.touches[0].pageX
     swipe.moveX = swipe.index * swipe.slideWidth + (swipe.touchStartPos - event.touches[0].pageX)
     if (swipe.lock === null) {
@@ -88,10 +89,12 @@ var swipe = {
       if (swipe.lastYPos > event.touches[0].pageY + thresh || swipe.lastYPos < event.touches[0].pageY - thresh) {
         swipe.lock = 'y'
       } else {
-        if (swipe.iOSBack !== null && swipe.touchStartPos - swipe.iOSBack.getBoundingClientRect().left < 14) {
+        if (swipe.iOSBack !== null && swipe.touchStartPos - swipe.iOSBack.getBoundingClientRect().left < 25) {
           swipe.lock = 'ios'
         } else {
-          swipe.lock = 'x'  
+          if (shouldNotMoveX !== true) {
+            swipe.lock = 'x'
+          }
         }        
       }
     }
@@ -111,7 +114,7 @@ var swipe = {
       if (pos < 0) {
         pos = 0
       }
-      swipe.iOSBack.setAttribute('style', 'transform: translate3d('+pos+'px,0,0)')
+      swipe.iOSBack.setAttribute('style', 'transform: translate3d('+pos+'px,0,0);animation:none;')
     }
   },
   contentTouchEnd: function(event) {
@@ -152,9 +155,13 @@ var swipe = {
       }
       swipe.iOSBack.className = swipe.iOSBack.className + ' swipe-animate'
       if (swipedAway) {
-        swipe.iOSBack.setAttribute('style', 'transform: translate3d('+swipe.slideWidth+'px,0,0)')
+        swipe.iOSBack.setAttribute('style', 'transform: translate3d('+swipe.slideWidth+'px,0,0);animation:none;')
       } else {
-        swipe.iOSBack.setAttribute('style', 'transform: translate3d(0px,0,0)')
+        swipe.iOSBack.setAttribute('style', 'transform: translate3d(0px,0,0);animation:none;')
+      }
+      // run a callback if there is one 
+      if (swipe.iOSBackCb !== null) {
+        swipe.iOSBackCb(swipedAway)
       }
     }
     swipe.lock = null
