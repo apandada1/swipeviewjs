@@ -4,6 +4,7 @@ var swipe = {
   lastYPos: 0,
   moveX: 0,
   index: 0,
+  height: 0,
   slideNumber: 0,
   slideWidth: 0,
   containerEl: null,
@@ -40,14 +41,21 @@ var swipe = {
     // don't do anything if person is in the middle of a swipe
     // it's get jerky and yuck
     if (swipe.lock === null) {
-      swipe.slideNumber = swipe.contentEl.children.length -1
-      swipe.slideWidth = swipe.contentEl.children[0].offsetWidth
-      swipe.contentEl.setAttribute('style', 'transform: translate3d(-'+swipe.index*swipe.slideWidth+'px,0,0)')
-      var swipeBar = swipe.headerEl.querySelector('.swipe-bar')
-      swipeBar.setAttribute('style', 'width:' + swipe.headerEl.children[0].children[0].offsetWidth + 'px;transform:translate3d('+swipe.index*swipe.headerEl.children[0].children[0].offsetWidth + 'px,0,0)')
+      requestAnimationFrame(function() {
+        swipe.slideNumber = swipe.contentEl.children.length -1
+        swipe.slideWidth = swipe.contentEl.children[0].offsetWidth
+
+        var h = ''
+        if (swipe.height !== 0) {
+          h = 'height:'+swipe.height+'px;'
+        }
+        swipe.contentEl.setAttribute('style', 'transform: translate3d(-'+swipe.index*swipe.slideWidth+'px,0,0);'+h)
+        var swipeBar = swipe.headerEl.querySelector('.swipe-bar')
+        swipeBar.setAttribute('style', 'width:' + swipe.headerEl.children[0].children[0].offsetWidth + 'px;transform:translate3d('+swipe.index*swipe.headerEl.children[0].children[0].offsetWidth + 'px,0,0)')
+      })
     }
   },
-  navigate: function(pane) {
+  navigate: function(pane, cb) {
     return function() {
       // remove old classes
       swipe.headerEl.children[0].children[swipe.index].className = swipe.headerEl.children[0].children[swipe.index].className.replace(' active', '')
@@ -57,12 +65,30 @@ var swipe = {
 
       swipe.index = pane
 
+      var h = ''
+      if (swipe.height !== 0) {
+        h = 'height:'+swipe.height+'px;'
+      }
+
       // animate everything
       swipe.contentEl.className = swipe.contentEl.className + ' swipe-animate'
-      swipe.contentEl.setAttribute('style', 'transform: translate3d(-'+swipe.index*swipe.slideWidth+'px,0,0)')
+      swipe.contentEl.setAttribute('style', 'transform: translate3d(-'+swipe.index*swipe.slideWidth+'px,0,0);'+h)
       swipe.headerEl.children[0].children[swipe.index].className += ' active'
       swipeBar.className = swipeBar.className + ' swipe-animate'
       swipeBar.setAttribute('style', 'width:' + swipe.headerEl.children[0].children[0].offsetWidth + 'px;transform:translate('+swipe.index*swipe.headerEl.children[0].children[0].offsetWidth + 'px)')
+
+      // bit of a hack specifically for transit app
+      if (cb) {
+        swipe.height = cb(swipe.index)
+      }
+      if (swipe.height !== 0) {
+        h = 'height:'+swipe.height+'px;'
+      }
+      setTimeout(function() {
+        requestAnimationFrame(function() {
+          swipe.contentEl.setAttribute('style', 'transform: translate3d(-'+swipe.index*swipe.slideWidth+'px,0,0);'+h)
+        })
+      }, 350)
     }
   },
   contentTouchStart: function(event) {
@@ -103,7 +129,11 @@ var swipe = {
       if (swipe.moveX < 0 || swipe.moveX > swipe.slideWidth * swipe.slideNumber) {
         return  
       }
-      swipe.contentEl.setAttribute('style', 'transform: translate3d(-'+swipe.moveX+'px,0,0)')
+      var h = ''
+      if (swipe.height !== 0) {
+        h = 'height:'+swipe.height+'px;'
+      }
+      swipe.contentEl.setAttribute('style', 'transform: translate3d(-'+swipe.moveX+'px,0,0);'+h)
       var slideWidth = swipe.index*swipe.headerEl.children[0].children[0].offsetWidth + (((swipe.touchStartPos - event.touches[0].pageX)/swipe.slideWidth)*swipe.headerEl.children[0].children[0].offsetWidth)
       swipe.headerEl
         .querySelector('.swipe-bar')
@@ -117,10 +147,7 @@ var swipe = {
       swipe.iOSBack.setAttribute('style', 'transform: translate3d('+pos+'px,0,0);animation:none;')
     }
   },
-  contentTouchEnd: function(event) {
-    // if (swipe.lock === 'y') {
-    //   return
-    // }
+  contentTouchEnd: function(event, cb) {
     if (swipe.lock === 'x') {
       swipe.headerEl.children[0].children[swipe.index].className = swipe.headerEl.children[0].children[swipe.index].className.replace(' active', '')
 
@@ -136,14 +163,31 @@ var swipe = {
           }
         }
       }
+
+      var h = ''
+      if (swipe.height !== 0) {
+        h = 'height:'+swipe.height+'px;'
+      }
       swipe.contentEl.className = swipe.contentEl.className + ' swipe-animate'
-      swipe.contentEl.setAttribute('style', 'transform: translate3d(-'+swipe.index*swipe.slideWidth+'px,0,0)')
+      swipe.contentEl.setAttribute('style', 'transform: translate3d(-'+swipe.index*swipe.slideWidth+'px,0,0);'+h)
       
       swipe.headerEl.children[0].children[swipe.index].className += ' active'
       var swipeBar = swipe.headerEl.querySelector('.swipe-bar')
       swipeBar.className = swipeBar.className + ' swipe-animate'
       swipeBar.setAttribute('style', 'width:' + swipe.headerEl.children[0].children[0].offsetWidth + 'px;transform:translate3d('+swipe.index*swipe.headerEl.children[0].children[0].offsetWidth + 'px,0,0)')
 
+      // bit of a hack specifically for transit app
+      if (cb) {
+        swipe.height = cb(swipe.index)
+      }
+      if (swipe.height !== 0) {
+        h = 'height:'+swipe.height+'px;'
+      }
+      setTimeout(function() {
+        requestAnimationFrame(function() {
+          swipe.contentEl.setAttribute('style', 'transform: translate3d(-'+swipe.index*swipe.slideWidth+'px,0,0);'+h)
+        })
+      }, 350)
     } else if (swipe.lock === 'ios') {
       var swipedAway = false
       var absMove = Math.abs(swipe.index * swipe.slideWidth - swipe.moveX)
