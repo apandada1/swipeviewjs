@@ -61,7 +61,7 @@ var swipe = {
       swipe.contentEl.setAttribute('style', 'transform: translate3d(-'+swipe.index*swipe.slideWidth+'px,0,0)')
       swipe.headerEl.children[0].children[swipe.index].className += ' active'
       swipeBar.className = swipeBar.className + ' swipe-animate'
-      swipeBar.setAttribute('style', 'width:' + swipe.headerEl.children[0].children[0].offsetWidth + 'px;transform:translate('+swipe.index*swipe.headerEl.children[0].children[0].offsetWidth + 'px)')
+      swipeBar.setAttribute('style', 'width:' + swipe.headerEl.children[0].children[0].offsetWidth + 'px;transform:translate3d('+swipe.index*swipe.headerEl.children[0].children[0].offsetWidth + 'px,0,0)')
     }
   },
   contentTouchStart: function(event) {

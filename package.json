@@ -1,0 +1,29 @@
+{
+  "name": "swipeviewjs",
+  "version": "1.0.0",
+  "description": "An Android style swipeview for the web ",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/consindo/swipeviewjs.git"
+  },
+  "author": "Jono Cooper <jono@jono.nz>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/consindo/swipeviewjs/issues"
+  },
+  "homepage": "https://github.com/consindo/swipeviewjs#readme",
+  "dependencies": {
+    "x-tag": "^1.5.11"
+  },
+  "devDependencies": {
+    "babel-core": "^6.18.2",
+    "babel-loader": "^6.2.8",
+    "babel-preset-latest": "^6.16.0",
+    "webpack": "^1.13.3"
+  }
+}
