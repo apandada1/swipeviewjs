@@ -1,26 +1,42 @@
 import xtag from 'x-tag'
-xtag.register('x-swipeview', {
+import header from './header'
+import pane from './pane'
+
+xtag.register('swipeview-header-container', header.container)
+xtag.register('swipeview-header-item', header.item)
+xtag.register('swipeview-pane-container', pane.container)
+xtag.register('swipeview-pane-item', pane.item)
+
+xtag.register('swipeview-container', {
   lifecycle: {
     created: function(){
-      this.start();
+      let jono = this.innerHTML
+      console.log('hi man')
+      console.log(jono)
+      jono += 'yo'
+      // this.innerHTML = ''
+      // setTimeout(() => {
+      //   this.innerHTML = jono
+      // }, 1000)
     }
   },
   methods: {
     start: function(){
-      this.update();
-      this.xtag.interval = setInterval(this.update.bind(this), 1000);
+      console.log(this)
+      console.log('i love')
+      // this.update();
+      // this.xtag.interval = setInterval(this.update.bind(this), 1000);
     },
     stop: function(){
-      this.xtag.interval = clearInterval(this.xtag.interval);
+      // this.xtag.interval = clearInterval(this.xtag.interval);
     },
     update: function(){
-      this.textContent = new Date().toLocaleTimeString();
+      // this.textContent = new Date().toLocaleTimeString();
     }
   },
   events: {
     tap: function(){
-      if (this.xtag.interval) this.stop();
-      else this.start();
+      console.log('clicked!')
     }
   }
-});
+})

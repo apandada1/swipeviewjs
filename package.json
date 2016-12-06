@@ -4,7 +4,8 @@
   "description": "An Android style swipeview for the web ",
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack -p",
+    "watch": "webpack --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
