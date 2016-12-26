@@ -109,9 +109,9 @@ var swipe = {
   },
   contentTouchMove: function(event, shouldNotMoveX) {
     swipe.lastXPos = event.touches[0].pageX
-    swipe.moveX = swipe.index * swipe.slideWidth + (swipe.touchStartPos - event.touches[0].pageX)
     if (swipe.lock === null) {
       var thresh = 7
+      swipe.fakeStartPos = swipe.touchStartPos
       if (swipe.lastYPos > event.touches[0].pageY + thresh || swipe.lastYPos < event.touches[0].pageY - thresh) {
         swipe.lock = 'y'
       } else {
@@ -120,10 +120,13 @@ var swipe = {
         } else {
           if (shouldNotMoveX !== true) {
             swipe.lock = 'x'
+            swipe.fakeStartPos = swipe.lastXPos
           }
         }        
       }
     }
+    // uses the fake start pos
+    swipe.moveX = swipe.index * swipe.slideWidth + (swipe.fakeStartPos - event.touches[0].pageX)
     if (swipe.lock === 'x') {
       event.preventDefault()
       if (swipe.moveX < 0 || swipe.moveX > swipe.slideWidth * swipe.slideNumber) {
@@ -134,7 +137,7 @@ var swipe = {
         h = 'height:'+swipe.height+'px;'
       }
       swipe.contentEl.setAttribute('style', 'transform: translate3d(-'+swipe.moveX+'px,0,0);'+h)
-      var slideWidth = swipe.index*swipe.headerEl.children[0].children[0].offsetWidth + (((swipe.touchStartPos - event.touches[0].pageX)/swipe.slideWidth)*swipe.headerEl.children[0].children[0].offsetWidth)
+      var slideWidth = swipe.index*swipe.headerEl.children[0].children[0].offsetWidth + (((swipe.fakeStartPos - event.touches[0].pageX)/swipe.slideWidth)*swipe.headerEl.children[0].children[0].offsetWidth)
       swipe.headerEl
         .querySelector('.swipe-bar')
         .setAttribute('style', 'width:' + swipe.headerEl.children[0].children[0].offsetWidth + 'px;transform:translate('+ slideWidth + 'px)')
